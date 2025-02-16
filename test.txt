@@ -1,0 +1,5 @@
+if (aux05 < aux04) {{
+				t = number[aux06] ;
+				number[aux06] = number[j] ;
+				number[j] = t;
+			}}
