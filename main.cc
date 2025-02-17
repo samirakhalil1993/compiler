@@ -1,6 +1,5 @@
 #include <iostream>
 #include "parser.tab.hh"
-#include "Semantic.hh"  // Include your semantic analysis file
 
 extern Node *root;
 extern FILE *yyin;
@@ -26,7 +25,7 @@ void yy::parser::error(std::string const &err)
 	if (!lexical_errors)
 	{
 		std::cerr << "Syntax errors found! See the logs below:" << std::endl;
-		std::cerr << "\t@error at line " << yylineno << ". Cannot generate a syntax for this input: " << err.c_str() << std::endl;
+		std::cerr << "\t@error at line " << yylineno << ". Cannot generate a syntax for this input:" << err.c_str() << std::endl;
 		std::cerr << "End of syntax errors!" << std::endl;
 		errCode = errCodes::SYNTAX_ERROR;
 	}
@@ -43,12 +42,13 @@ int main(int argc, char **argv)
 			return 1;
 		}
 	}
-
+	//
 	if (USE_LEX_ONLY)
 		yylex();
 	else
 	{
 		yy::parser parser;
+
 		bool parseSuccess = !parser.parse();
 
 		if (lexical_errors)
@@ -56,20 +56,13 @@ int main(int argc, char **argv)
 
 		if (parseSuccess && !lexical_errors)
 		{
-			printf("\nThe compiler successfully generated a syntax tree for the given input!\n");
+			printf("\nThe compiler successfuly generated a syntax tree for the given input! \n");
 
-			printf("\nPrint Tree:\n");
+			printf("\nPrint Tree:  \n");
 			try
 			{
 				root->print_tree();
 				root->generate_tree();
-
-				// 🔹 Call Semantic Analysis here
-				printf("\nPerforming Semantic Analysis...\n");
-				if (!semanticAnalysis(root)) // Assume `semanticAnalysis` returns false if an error occurs
-				{
-					errCode = errCodes::SEMANTIC_ERROR;
-				}
 			}
 			catch (...)
 			{
