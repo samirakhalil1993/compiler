@@ -1,5 +1,9 @@
-if (aux05 < aux04) {{
-				t = number[aux06] ;
-				number[aux06] = number[j] ;
-				number[j] = t;
-			}}
+class BBS {
+    int size;
+    int[] number;
+
+    public int Init(int sz) {
+        int aux01;
+        return 0;
+    }
+}

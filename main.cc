@@ -1,84 +1,75 @@
 #include <iostream>
 #include "parser.tab.hh"
 
-// External variables from the lexer/parser
-extern Node *root;       // Pointer to the root of the syntax tree
-extern FILE *yyin;       // File pointer for input file
-extern int yylineno;     // Keeps track of the current line number
-extern int lexical_errors;  // Counts the number of lexical errors
-extern yy::parser::symbol_type yylex(); // Function for lexical analysis
+extern Node *root;
+extern FILE *yyin;
+extern int yylineno;
+extern int lexical_errors;
+extern yy::parser::symbol_type yylex();
 
-// Enumeration for different error codes
 enum errCodes
 {
-	SUCCESS = 0,            // No errors
-	LEXICAL_ERROR = 1,      // Lexical error (invalid tokens)
-	SYNTAX_ERROR = 2,       // Syntax error (invalid grammar)
-	AST_ERROR = 3,          // Error in Abstract Syntax Tree (AST) generation
-	SEMANTIC_ERROR = 4,     // Semantic error (not implemented in this code)
-	SEGMENTATION_FAULT = 139 // Segmentation fault (crash)
+	SUCCESS = 0,
+	LEXICAL_ERROR = 1,
+	SYNTAX_ERROR = 2,
+	AST_ERROR = 3,
+	SEMANTIC_ERROR = 4,
+	SEGMENTATION_FAULT = 139
 };
 
-// Global variable to store error status
 int errCode = errCodes::SUCCESS;
 
-// Function to handle syntax errors during parsing
+// Handling Syntax Errors
 void yy::parser::error(std::string const &err)
 {
-	if (!lexical_errors) // Only report syntax errors if there are no lexical errors
+	if (!lexical_errors)
 	{
 		std::cerr << "Syntax errors found! See the logs below:" << std::endl;
-		std::cerr << "\t@error at line " << yylineno << ". Cannot generate a syntax for this input: " 
-		          << err.c_str() << std::endl;
+		std::cerr << "\t@error at line " << yylineno << ". Cannot generate a syntax for this input:" << err.c_str() << std::endl;
 		std::cerr << "End of syntax errors!" << std::endl;
-		errCode = errCodes::SYNTAX_ERROR; // Set error code to syntax error
+		errCode = errCodes::SYNTAX_ERROR;
 	}
 }
 
 int main(int argc, char **argv)
 {
-	// Check if a file is provided as an argument
+	// Reads from file if a file name is passed as an argument. Otherwise, reads from stdin.
 	if (argc > 1)
 	{
-		// Try to open the file for reading
 		if (!(yyin = fopen(argv[1], "r")))
 		{
-			perror(argv[1]); // Print error if file cannot be opened
-			return 1; // Exit with error code 1
+			perror(argv[1]);
+			return 1;
 		}
 	}
-	
-	// If only lexical analysis is required, call yylex() and exit
+	//
 	if (USE_LEX_ONLY)
 		yylex();
 	else
 	{
-		yy::parser parser; // Create a parser object
+		yy::parser parser;
 
-		// Parse the input and check if parsing was successful
-		bool parseSuccess = !parser.parse(); // parser.parse() returns 0 on success
+		bool parseSuccess = !parser.parse();
 
-		// If there were lexical errors, update error code
 		if (lexical_errors)
 			errCode = errCodes::LEXICAL_ERROR;
 
-		// If parsing was successful and there were no lexical errors
 		if (parseSuccess && !lexical_errors)
 		{
-			printf("\nThe compiler successfully generated a syntax tree for the given input! \n");
+			printf("\nThe compiler successfuly generated a syntax tree for the given input! \n");
 
 			printf("\nPrint Tree:  \n");
 			try
 			{
-				root->print_tree();    // Print the syntax tree
-				root->generate_tree(); // Generate tree structure
+				root->print_tree();
+				root->generate_tree();
 			}
 			catch (...)
 			{
-				errCode = errCodes::AST_ERROR; // Set error code if AST generation fails
+				errCode = errCodes::AST_ERROR;
 			}
 		}
 	}
 
-	return errCode; // Return the final error code
+	return errCode;
 }
