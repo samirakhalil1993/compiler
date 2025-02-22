@@ -33,7 +33,7 @@ public:
 	void generate_tree() {
 		std::ofstream outStream;
 		char* filename = "tree.dot";
-	  	outStream.open(filename);z
+	  	outStream.open(filename);
 
 		int count = 0;
 		outStream << "digraph {" << std::endl;

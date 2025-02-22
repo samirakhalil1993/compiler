@@ -85,14 +85,18 @@ MainMethod: PUBLIC STATIC VOID MAIN LP STRING LBRACKET RBRACKET IDENTIFIER RP LB
 ;
 
 ClassDeclarations:
-    /* Zero or more class declarations */
     { $$ = new Node("ClassDeclarations", "", yylineno); }
   | ClassDeclarations ClassDeclaration
     {
-        $$ = $1;
-        $$->children.push_back($2);
+        if ($1 && $2) {
+            $$ = $1;
+            $$->children.push_back($2);
+        } else {
+            cerr << "Null node encountered while building ClassDeclarations." << endl;
+        }
     }
 ;
+
 
 ClassDeclaration:
     CLASS IDENTIFIER LBRACE ClassBody RBRACE
@@ -132,12 +136,13 @@ VarDeclaration: Type IDENTIFIER SEMICOLON
 MethodDeclaration:
     PUBLIC Type IDENTIFIER LP MethodParameters RP LBRACE MethodBody ReturnStatement RBRACE
     {
-        $$ = new Node("MethodDeclaration", "", yylineno);
+        $$ = new Node("MethodDeclaration", $3, yylineno);  // Store method name ($3) correctly
         $$->children.push_back($5);  // Parameters
         $$->children.push_back($8);  // Method body
         $$->children.push_back($9);  // Return statement
     }
 ;
+
 
 MethodParameters:
     /* No parameters */

@@ -1,0 +1,4 @@
+digraph SymbolTable {
+  A [shape=box, label="A\n(Class)"];
+  InvalidArrayInteger [shape=box, label="InvalidArrayInteger\n(Class)"];
+}
