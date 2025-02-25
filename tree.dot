@@ -1,155 +1,305 @@
 digraph {
 n0 [label="Goal:"];
-n1 [label="MainClass:SemanticMethodCallInBooleanExpression"];
+n1 [label="MainClass:InvalidOperations"];
 n2 [label="MainMethod:a"];
 n3 [label="Statements:"];
 n2 -> n3
 n1 -> n2
 n0 -> n1
 n4 [label="ClassDeclarations:"];
-n5 [label="ClassDeclaration:A"];
+n5 [label="ClassDeclaration:MyClass"];
 n6 [label="ClassBody:"];
 n7 [label="VarDeclaration:"];
-n8 [label="TypeBoolean:"];
+n8 [label="int:"];
 n7 -> n8
-n9 [label="Identifier:b"];
+n9 [label="Identifier:i1"];
 n7 -> n9
 n6 -> n7
-n10 [label="MethodDeclaration:a1"];
-n11 [label="Parameters:"];
-n12 [label="Parameter:"];
-n13 [label="Identifier:num"];
-n12 -> n13
-n11 -> n12
+n10 [label="VarDeclaration:"];
+n11 [label="int:"];
 n10 -> n11
-n14 [label="MethodBody:"];
-n15 [label="VarDeclaration:"];
-n16 [label="TypeInt:"];
-n15 -> n16
-n17 [label="Identifier:num_aux"];
-n15 -> n17
-n14 -> n15
-n18 [label="IfStatement:"];
-n19 [label="MethodCall:a3"];
-n20 [label="ThisExpression:this"];
-n19 -> n20
-n21 [label="Arguments:"];
-n19 -> n21
-n18 -> n19
-n22 [label="Assignment:num_aux"];
-n23 [label="IntegerLiteral:1"];
-n22 -> n23
-n18 -> n22
-n24 [label="IfStatement:"];
-n25 [label="LessThan:"];
-n26 [label="MethodCall:a2"];
-n27 [label="ThisExpression:this"];
-n26 -> n27
-n28 [label="Arguments:"];
-n26 -> n28
-n25 -> n26
-n29 [label="IntegerLiteral:1"];
-n25 -> n29
-n24 -> n25
-n30 [label="Assignment:num_aux"];
-n31 [label="MultExpression:"];
-n32 [label="Identifier:num"];
-n31 -> n32
-n33 [label="INParantes:"];
-n34 [label="MethodCall:a2"];
-n35 [label="ThisExpression:this"];
-n34 -> n35
-n36 [label="Arguments:"];
-n34 -> n36
-n33 -> n34
-n31 -> n33
-n30 -> n31
-n24 -> n30
-n37 [label="Assignment:num_aux"];
-n38 [label="IntegerLiteral:0"];
-n37 -> n38
-n24 -> n37
-n18 -> n24
-n14 -> n18
-n10 -> n14
-n39 [label="ReturnStatement:"];
-n40 [label="ThisExpression:this"];
-n39 -> n40
-n10 -> n39
+n12 [label="Identifier:i2"];
+n10 -> n12
 n6 -> n10
-n41 [label="MethodDeclaration:a2"];
-n42 [label="Parameters:"];
-n41 -> n42
-n43 [label="MethodBody:"];
-n44 [label="Assignment:b"];
-n45 [label="MethodCall:a3"];
-n46 [label="MethodCall:a1"];
-n47 [label="ThisExpression:this"];
-n46 -> n47
-n48 [label="Arguments:"];
-n49 [label="MethodCall:a4"];
-n50 [label="MethodCall:a1"];
-n51 [label="ThisExpression:this"];
-n50 -> n51
-n52 [label="Arguments:"];
-n53 [label="IntegerLiteral:2"];
-n52 -> n53
-n50 -> n52
-n49 -> n50
-n54 [label="Arguments:"];
-n49 -> n54
-n48 -> n49
-n46 -> n48
-n45 -> n46
-n55 [label="Arguments:"];
-n45 -> n55
-n44 -> n45
+n13 [label="VarDeclaration:"];
+n14 [label="boolean:"];
+n13 -> n14
+n15 [label="Identifier:b1"];
+n13 -> n15
+n6 -> n13
+n16 [label="VarDeclaration:"];
+n17 [label="boolean:"];
+n16 -> n17
+n18 [label="Identifier:b2"];
+n16 -> n18
+n6 -> n16
+n19 [label="VarDeclaration:"];
+n20 [label="int[]:"];
+n19 -> n20
+n21 [label="Identifier:ia1"];
+n19 -> n21
+n6 -> n19
+n22 [label="VarDeclaration:"];
+n23 [label="int[]:"];
+n22 -> n23
+n24 [label="Identifier:ia2"];
+n22 -> n24
+n6 -> n22
+n25 [label="VarDeclaration:"];
+n26 [label="UserDefinedType:ClassDatatest"];
+n25 -> n26
+n27 [label="Identifier:c1"];
+n25 -> n27
+n6 -> n25
+n28 [label="VarDeclaration:"];
+n29 [label="UserDefinedType:ClassDatatest"];
+n28 -> n29
+n30 [label="Identifier:c2"];
+n28 -> n30
+n6 -> n28
+n31 [label="MethodDeclaration:semantically_incorrect_expressions"];
+n32 [label="Parameters:"];
+n31 -> n32
+n33 [label="MethodBody:"];
+n34 [label="Assignment:i1"];
+n35 [label="AddExpression:"];
+n36 [label="Identifier:i1"];
+n35 -> n36
+n37 [label="Identifier:b1"];
+n35 -> n37
+n34 -> n35
+n33 -> n34
+n38 [label="Assignment:i1"];
+n39 [label="AddExpression:"];
+n40 [label="Identifier:i1"];
+n39 -> n40
+n41 [label="Identifier:ia1"];
+n39 -> n41
+n38 -> n39
+n33 -> n38
+n42 [label="Assignment:i1"];
+n43 [label="AddExpression:"];
+n44 [label="Identifier:i1"];
 n43 -> n44
-n56 [label="VarDeclaration:"];
-n57 [label="TypeInt:"];
-n56 -> n57
-n58 [label="Identifier:ret"];
-n56 -> n58
-n43 -> n56
-n59 [label="IfStatement:"];
-n60 [label="Identifier:b"];
-n59 -> n60
-n61 [label="Assignment:ret"];
-n62 [label="IntegerLiteral:1"];
+n45 [label="Identifier:c1"];
+n43 -> n45
+n42 -> n43
+n33 -> n42
+n46 [label="Assignment:i1"];
+n47 [label="AddExpression:"];
+n48 [label="Identifier:b1"];
+n47 -> n48
+n49 [label="Identifier:b1"];
+n47 -> n49
+n46 -> n47
+n33 -> n46
+n50 [label="Assignment:i1"];
+n51 [label="AddExpression:"];
+n52 [label="Identifier:ia1"];
+n51 -> n52
+n53 [label="Identifier:ia1"];
+n51 -> n53
+n50 -> n51
+n33 -> n50
+n54 [label="Assignment:i1"];
+n55 [label="AddExpression:"];
+n56 [label="Identifier:ia1"];
+n55 -> n56
+n57 [label="ArrayAccess:"];
+n58 [label="Identifier:ia1"];
+n57 -> n58
+n59 [label="IntegerLiteral:0"];
+n57 -> n59
+n55 -> n57
+n54 -> n55
+n33 -> n54
+n60 [label="Assignment:i1"];
+n61 [label="AddExpression:"];
+n62 [label="Identifier:c1"];
 n61 -> n62
-n59 -> n61
-n63 [label="Assignment:ret"];
-n64 [label="IntegerLiteral:0"];
-n63 -> n64
-n59 -> n63
-n43 -> n59
-n41 -> n43
-n65 [label="ReturnStatement:"];
-n66 [label="Identifier:ret"];
+n63 [label="Identifier:c1"];
+n61 -> n63
+n60 -> n61
+n33 -> n60
+n64 [label="Assignment:i1"];
+n65 [label="AndExpression:"];
+n66 [label="Identifier:c1"];
 n65 -> n66
-n41 -> n65
-n6 -> n41
-n67 [label="MethodDeclaration:a3"];
-n68 [label="Parameters:"];
-n67 -> n68
-n69 [label="MethodBody:"];
-n67 -> n69
-n70 [label="ReturnStatement:"];
-n71 [label="Identifier:true"];
-n70 -> n71
-n67 -> n70
-n6 -> n67
-n72 [label="MethodDeclaration:a4"];
-n73 [label="Parameters:"];
+n67 [label="Identifier:c1"];
+n65 -> n67
+n64 -> n65
+n33 -> n64
+n68 [label="Assignment:i1"];
+n69 [label="LogicalAndOr:"];
+n70 [label="Identifier:c1"];
+n69 -> n70
+n71 [label="Identifier:c1"];
+n69 -> n71
+n68 -> n69
+n33 -> n68
+n72 [label="Assignment:i1"];
+n73 [label="LessThan:"];
+n74 [label="Identifier:c1"];
+n73 -> n74
+n75 [label="Identifier:c1"];
+n73 -> n75
 n72 -> n73
-n74 [label="MethodBody:"];
-n72 -> n74
-n75 [label="ReturnStatement:"];
-n76 [label="IntegerLiteral:1"];
-n75 -> n76
-n72 -> n75
-n6 -> n72
+n33 -> n72
+n76 [label="Assignment:b1"];
+n77 [label="AddExpression:"];
+n78 [label="Identifier:b1"];
+n77 -> n78
+n79 [label="Identifier:b1"];
+n77 -> n79
+n76 -> n77
+n33 -> n76
+n80 [label="Assignment:b1"];
+n81 [label="AddExpression:"];
+n82 [label="Identifier:b1"];
+n81 -> n82
+n83 [label="Identifier:ia1"];
+n81 -> n83
+n80 -> n81
+n33 -> n80
+n84 [label="Assignment:b1"];
+n85 [label="AndExpression:"];
+n86 [label="Identifier:b1"];
+n85 -> n86
+n87 [label="Identifier:ia1"];
+n85 -> n87
+n84 -> n85
+n33 -> n84
+n88 [label="Assignment:b1"];
+n89 [label="Equals:"];
+n90 [label="Identifier:b1"];
+n89 -> n90
+n91 [label="Identifier:c1"];
+n89 -> n91
+n88 -> n89
+n33 -> n88
+n92 [label="Assignment:ia1"];
+n93 [label="AddExpression:"];
+n94 [label="Identifier:ia1"];
+n93 -> n94
+n95 [label="Identifier:ia2"];
+n93 -> n95
+n92 -> n93
+n33 -> n92
+n96 [label="Assignment:ia1"];
+n97 [label="AndExpression:"];
+n98 [label="Identifier:ia1"];
+n97 -> n98
+n99 [label="Identifier:ia2"];
+n97 -> n99
+n96 -> n97
+n33 -> n96
+n100 [label="Assignment:b1"];
+n101 [label="LessThan:"];
+n102 [label="Identifier:b1"];
+n101 -> n102
+n103 [label="Identifier:b2"];
+n101 -> n103
+n100 -> n101
+n33 -> n100
+n104 [label="Assignment:b1"];
+n105 [label="Negation:"];
+n106 [label="Identifier:i1"];
+n105 -> n106
+n104 -> n105
+n33 -> n104
+n31 -> n33
+n107 [label="ReturnStatement:"];
+n108 [label="Identifier:true"];
+n107 -> n108
+n31 -> n107
+n6 -> n31
+n109 [label="MethodDeclaration:operator_test_work"];
+n110 [label="Parameters:"];
+n109 -> n110
+n111 [label="MethodBody:"];
+n112 [label="Assignment:i1"];
+n113 [label="AddExpression:"];
+n114 [label="Identifier:i1"];
+n113 -> n114
+n115 [label="Identifier:i2"];
+n113 -> n115
+n112 -> n113
+n111 -> n112
+n116 [label="Assignment:i1"];
+n117 [label="AddExpression:"];
+n118 [label="ArrayAccess:"];
+n119 [label="Identifier:ia1"];
+n118 -> n119
+n120 [label="IntegerLiteral:1"];
+n118 -> n120
+n117 -> n118
+n121 [label="ArrayAccess:"];
+n122 [label="Identifier:ia2"];
+n121 -> n122
+n123 [label="IntegerLiteral:2"];
+n121 -> n123
+n117 -> n121
+n116 -> n117
+n111 -> n116
+n124 [label="Assignment:i1"];
+n125 [label="AddExpression:"];
+n126 [label="ArrayAccess:"];
+n127 [label="MethodCall:get_trash"];
+n128 [label="Identifier:c1"];
+n127 -> n128
+n129 [label="Arguments:"];
+n127 -> n129
+n126 -> n127
+n130 [label="IntegerLiteral:2"];
+n126 -> n130
+n125 -> n126
+n131 [label="Identifier:i2"];
+n125 -> n131
+n124 -> n125
+n111 -> n124
+n132 [label="Assignment:b1"];
+n133 [label="AndExpression:"];
+n134 [label="Identifier:b1"];
+n133 -> n134
+n135 [label="Identifier:b2"];
+n133 -> n135
+n132 -> n133
+n111 -> n132
+n136 [label="Assignment:b1"];
+n137 [label="LessThan:"];
+n138 [label="Identifier:i1"];
+n137 -> n138
+n139 [label="Identifier:i2"];
+n137 -> n139
+n136 -> n137
+n111 -> n136
+n109 -> n111
+n140 [label="ReturnStatement:"];
+n141 [label="Identifier:true"];
+n140 -> n141
+n109 -> n140
+n6 -> n109
 n5 -> n6
 n4 -> n5
+n142 [label="ClassDeclaration:ClassDatatest"];
+n143 [label="ClassBody:"];
+n144 [label="VarDeclaration:"];
+n145 [label="int[]:"];
+n144 -> n145
+n146 [label="Identifier:trash"];
+n144 -> n146
+n143 -> n144
+n147 [label="MethodDeclaration:get_trash"];
+n148 [label="Parameters:"];
+n147 -> n148
+n149 [label="MethodBody:"];
+n147 -> n149
+n150 [label="ReturnStatement:"];
+n151 [label="Identifier:trash"];
+n150 -> n151
+n147 -> n150
+n143 -> n147
+n142 -> n143
+n4 -> n142
 n0 -> n4
 }

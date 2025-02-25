@@ -1,26 +1,21 @@
 #include "SymbolTable.h"
 #include <fstream> // For file operations
 
-// Class to store information about a symbol (like a variable or parameter)
-SymbolRecord::SymbolRecord(string n, string t, string s) : name(n), type(t), scope(s) {}
 
-// Prints the symbol details (scope, name, and type)
-void SymbolRecord::print() const {
-    cout << scope << "::" << name << " -> " << type << endl;
-}
 
 // Class to store information about a method (like a function)
 MethodRecord::MethodRecord(string n, string rt) : name(n), returnType(rt) {}
+
+// Adds a local variable to the method
+void MethodRecord::addVariable(string vname, string vtype) {
+    variables[vname] = SymbolRecord(vname, vtype, "local(" + name + ")");
+}
 
 // Adds a parameter to the method
 void MethodRecord::addParameter(string pname, string ptype) {
     parameters[pname] = SymbolRecord(pname, ptype, "param(" + name + ")");
 }
 
-// Adds a local variable to the method
-void MethodRecord::addVariable(string vname, string vtype) {
-    variables[vname] = SymbolRecord(vname, vtype, "local(" + name + ")");
-}
 
 // Prints the method details including its parameters and local variables
 void MethodRecord::print() const {
@@ -47,8 +42,12 @@ void MethodRecord::print() const {
     }
 }
 
+
 // Class to store information about a class (like fields and methods)
 ClassRecord::ClassRecord(string n) : name(n) {}
+
+
+
 
 // Adds a field (like a class variable) to the class
 void ClassRecord::addField(string fname, string ftype) {
@@ -89,6 +88,11 @@ void ClassRecord::print() const {
     cout << endl;
 }
 
+
+// Class to store information about a symbol (like a variable or parameter)*****************************************************************************
+SymbolRecord::SymbolRecord(string n, string t, string s) : name(n), type(t), scope(s) {}
+
+
 // SymbolTable manages all classes, fields, and methods
 void SymbolTable::addClass(string cname) {
     classes[cname] = ClassRecord(cname);
@@ -123,10 +127,11 @@ void SymbolTable::printTable() const {
     cout << "============================\n" << endl;
 }
 
-// Scope management functions
+// Scope management functions using map for deterministic ordering
 void SymbolTable::enterScope() {
-    scopes.push(unordered_map<string, SymbolRecord>());
+    scopes.push(map<string, SymbolRecord>());
 }
+
 
 void SymbolTable::exitScope() {
     if (!scopes.empty()) {
@@ -140,16 +145,18 @@ void SymbolTable::addSymbol(string name, SymbolRecord record) {
     }
 }
 
+// Lookup symbol in all available scopes using map for deterministic ordering
 bool SymbolTable::lookup(string name) {
-    stack<unordered_map<string, SymbolRecord>> temp = scopes;
+    stack<map<string, SymbolRecord>> temp = scopes;
     while (!temp.empty()) {
         if (temp.top().find(name) != temp.top().end()) {
-            return true;
+            return true; // Symbol found
         }
         temp.pop();
     }
-    return false;
+    return false; // Symbol not found
 }
+
 
 // Generates a DOT file (graph representation of the symbol table)
 void SymbolTable::generateDotFile(const string &filename) const {

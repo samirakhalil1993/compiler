@@ -1,20 +1,16 @@
 digraph SymbolTable {
-  A [shape=box, label="A\n(Class)"];
-  A_a4 [shape=ellipse, label="a4\n(Method)"];
-  A -> A_a4;
-  A_a3 [shape=ellipse, label="a3\n(Method)"];
-  A -> A_a3;
-  A_a2 [shape=ellipse, label="a2\n(Method)"];
-  A -> A_a2;
-  A_a2_ret [shape=oval, label="ret\n(Variable)"];
-  A_a2 -> A_a2_ret;
-  A_a1 [shape=ellipse, label="a1\n(Method)"];
-  A -> A_a1;
-  A_a1_num [shape=diamond, label="num\n(Parameter)"];
-  A_a1 -> A_a1_num;
-  A_a1_num_aux [shape=oval, label="num_aux\n(Variable)"];
-  A_a1 -> A_a1_num_aux;
-  SemanticMethodCallInBooleanExpression [shape=box, label="SemanticMethodCallInBooleanExpression\n(Class)"];
-  SemanticMethodCallInBooleanExpression_a [shape=ellipse, label="a\n(Method)"];
-  SemanticMethodCallInBooleanExpression -> SemanticMethodCallInBooleanExpression_a;
+   [shape=box, label="\n(Class)"];
+  _ [shape=ellipse, label="\n(Method)"];
+   -> _;
+  ClassDatatest [shape=box, label="ClassDatatest\n(Class)"];
+  ClassDatatest_get_trash [shape=ellipse, label="get_trash\n(Method)"];
+  ClassDatatest -> ClassDatatest_get_trash;
+  InvalidOperations [shape=box, label="InvalidOperations\n(Class)"];
+  InvalidOperations_a [shape=ellipse, label="a\n(Method)"];
+  InvalidOperations -> InvalidOperations_a;
+  MyClass [shape=box, label="MyClass\n(Class)"];
+  MyClass_operator_test_work [shape=ellipse, label="operator_test_work\n(Method)"];
+  MyClass -> MyClass_operator_test_work;
+  MyClass_semantically_incorrect_expressions [shape=ellipse, label="semantically_incorrect_expressions\n(Method)"];
+  MyClass -> MyClass_semantically_incorrect_expressions;
 }

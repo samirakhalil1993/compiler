@@ -148,19 +148,26 @@ MethodParameters:
     /* No parameters */
     { $$ = new Node("Parameters", "", yylineno); }
   | Type IDENTIFIER
-    {
-        $$ = new Node("Parameters", "", yylineno);
-        Node* paramNode = new Node("Parameter", "", yylineno);
-        paramNode->children.push_back(new Node("Identifier", $2, yylineno));
-        $$->children.push_back(paramNode);
-    }
-  | MethodParameters COMMA Type IDENTIFIER
-    {
-        Node* paramNode = new Node("Parameter", "", yylineno);
-        paramNode->children.push_back(new Node("Identifier", $4, yylineno));
-        $$->children.push_back(paramNode);
-    }
+{
+    $$ = new Node("Parameters", "", yylineno); // ✅ Create Parameters node
+    Node* paramNode = new Node("Parameter", "", yylineno);
+    paramNode->children.push_back(new Node("Identifier", $2, yylineno)); // Properly set child identifier
+    $$->children.push_back(paramNode);
+}
+
+| MethodParameters COMMA Type IDENTIFIER
+{
+    $$ = $1; // ✅ Use existing MethodParameters node
+
+    Node* paramNode = new Node("Parameter", "", yylineno); // Create a proper Parameter node
+    paramNode->children.push_back(new Node("Identifier", $4, yylineno)); // Add Identifier as a child
+
+    $$->children.push_back(paramNode); // ✅ Add parameter to the list
+}
+
+
 ;
+
 MethodBody:
     /* No body */
     { $$ = new Node("MethodBody", "", yylineno); }
@@ -193,21 +200,23 @@ ReturnStatement:
 Type:
       INT LBRACKET RBRACKET
       {
-          $$ = new Node("ArrayType", "", yylineno);
+          $$ = new Node("int[]", "", yylineno);  // Clearly define it as an integer array
       }
     | BOOLEAN
       {
-          $$ = new Node("TypeBoolean", "", yylineno);
+          $$ = new Node("boolean", "", yylineno);
       }
     | INT
       {
-          $$ = new Node("TypeInt", "", yylineno);
+          $$ = new Node("int", "", yylineno);
       }
     | IDENTIFIER
       {
           $$ = new Node("UserDefinedType", $1, yylineno);  // Custom or user-defined type
       }
 ;
+
+
 
 
 Statements:

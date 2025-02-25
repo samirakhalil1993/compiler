@@ -5,6 +5,9 @@
 #include <iostream> // For input/output operations
 #include <unordered_map> // For using hash maps (key-value pairs)
 #include <string> // For using string data type
+#include <map> // Replace unordered_map with map for stable lookups
+#include <stack> // For managing scopes
+
 
 using namespace std; // To avoid using std:: everywhere
 
@@ -20,77 +23,67 @@ public:
     SymbolRecord(string n, string t, string s);
 
     // Print symbol information
-    void print() const;
+    //void print() const;
 };
 
 // Class to represent a method (like a function)
+
+
+  
 class MethodRecord {
-public:
-    string name, returnType; // Method name and return type
-    unordered_map<string, SymbolRecord> parameters; // Method parameters
-    unordered_map<string, SymbolRecord> variables;  // Local variables inside the method
+    public:
+        string name, returnType; // Method name and return type
+        map<string, SymbolRecord> parameters; // Method parameters
+        map<string, SymbolRecord> variables;  // Local variables inside the method
+    
+        MethodRecord() : name(""), returnType("") {}
+        MethodRecord(string n, string rt);
+    
+        void addParameter(string pname, string ptype);
+        void addVariable(string vname, string vtype);
+        void print() const;
+    };
 
-    // Default constructor - initializes name and returnType to empty
-    MethodRecord() : name(""), returnType("") {}
-
-    // Constructor with parameters to set name and return type
-    MethodRecord(string n, string rt);
-
-    // Add a parameter to the method
-    void addParameter(string pname, string ptype);
-
-    // Add a local variable to the method
-    void addVariable(string vname, string vtype);
-
-    // Print method details
-    void print() const;
-};
-
+    
+    
+    
+    
 // Class to represent a class (similar to classes in programming languages)
 class ClassRecord {
-public:
-    string name; // Class name
-    unordered_map<string, SymbolRecord> fields; // Fields (variables) of the class
-    unordered_map<string, MethodRecord> methods; // Methods of the class
-
-    // Default constructor - initializes name to empty
-    ClassRecord() : name("") {}
-
-    // Constructor with parameter to set class name
-    ClassRecord(string n);
-
-    // Add a field (variable) to the class
-    void addField(string fname, string ftype);
-
-    // Add a method to the class
-    void addMethod(string mname, string returnType);
-
-    // Print class details
-    void print() const;
-};
+    public:
+        string name; // Class name
+        map<string, SymbolRecord> fields; // Class fields (variables)
+        map<string, MethodRecord> methods; // Class methods
+    
+        ClassRecord() : name("") {}
+        ClassRecord(string n);
+    
+        void addField(string fname, string ftype);
+        void addMethod(string mname, string returnType);
+        void print() const;
+    };
 
 // SymbolTable class manages all classes, fields, methods, and symbols
-#include <stack> // For managing scopes
+
 
 class SymbolTable {
-public:
-    unordered_map<string, ClassRecord> classes;
-    stack<unordered_map<string, SymbolRecord>> scopes; // Stack for nested scopes
-
-    void enterScope();  // Start a new scope
-    void exitScope();   // End the current scope
-    void addSymbol(string name, SymbolRecord record); // Add symbol to the current scope
-    bool lookup(string name); // Check if a symbol exists in the current scope or outer scopes
-
-    void addClass(string cname);
-    void addField(string cname, string fname, string ftype);
-    void addMethod(string cname, string mname, string returnType);
-    void addParameter(string cname, string mname, string pname, string ptype);
-    void addVariable(string cname, string mname, string vname, string vtype);
-    void printTable() const;
-    void generateDotFile(const string &filename) const;
-};
-
+    public:
+        map<string, ClassRecord> classes; // Use map for deterministic ordering
+        stack<map<string, SymbolRecord>> scopes; // Stack for nested scopes using map
+    
+        void enterScope();  // Start a new scope
+        void exitScope();   // End the current scope
+        void addSymbol(string name, SymbolRecord record); // Add symbol to the current scope
+        bool lookup(string name); // Check if a symbol exists in any scope
+    
+        void addClass(string cname);
+        void addField(string cname, string fname, string ftype);
+        void addMethod(string cname, string mname, string returnType);
+        void addParameter(string cname, string mname, string pname, string ptype);
+        void addVariable(string cname, string mname, string vname, string vtype);
+        void printTable() const;
+        void generateDotFile(const string &filename) const;
+    };
 
 // End of the header file guard
 #endif // SYMBOL_TABLE_H
