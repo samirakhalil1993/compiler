@@ -1,22 +1,15 @@
-/* Skeleton and definitions for generating a LALR(1) parser in C++ */
 %skeleton "lalr1.cc" 
 %defines
 %define parse.error verbose
 %define api.value.type variant
 %define api.token.constructor
 
-
-
-/* Required code included before the parser definition begins */
 %code requires{
   #include <string>
   #include "Node.h"
   #define USE_LEX_ONLY false //change this macro to true if you want to isolate the lexer from the parser.
 }
 
-
-
-/* Code included in the parser implementation file */
 %code{
   #define YY_DECL yy::parser::symbol_type yylex()
   YY_DECL;
@@ -25,377 +18,263 @@
   extern int yylineno;
 }
 
-/* Token definitions for the grammar */
-/* Tokens represent the smallest units of the language, like operators and parentheses */
-%token <std::string> PLUSOP MINUSOP MULTOP  LP RP CLASS PUBLIC STATIC VOID INT_TYPE BOOLEAN IF ELSE WHILE RETURN THIS NEW
-%token <std::string> ASSIGN LT AND LBRACE RBRACE SEMICOLON IDENTIFIER INTEGER_LITERAL MAIN RBRACKET LBRACKET DOT COMMA NOT
-%token <std::string> ANDOR GT EQ LENGTH TRUE FALSE STRING INT FLOAT 
-%token <std::string> SYSTEM OUT PRINTLN  
-%nonassoc LOWER_THAN_ELSE
-%nonassoc ELSE
 
-
+// definition of set of tokens. All tokens are of type string
+%token PUBLIC CLASS STATIC VOID MAIN STRING IF ELSE WHILE PRINTLN RETURN NEW TRUE FALSE THIS NOT LBRACE RBRACE COMMA COLON SEMICOLON EQUALS LBRACKET RBRACKET DOT AND OR LT GT EQUAL DIVIDE LENGTH
+%token <int> INTEGER_LITERAL
+%token <std::string> INT IDENTIFIER PLUS MINUS TIMES BOOLEAN LP RP
 %token END 0 "end of file"
 
+// define the operator precedence
+// Define the operator precedence (from lowest to highest)
+%left OR
+%left AND
+%left EQUAL
+%left LT GT 
+%left PLUS MINUS
+%left TIMES DIVIDE
+%right NOT
 
+%type <Node *> root Goal MainClass ClassDeclarations ClassDeclaration VarDeclarations VarDeclaration MethodDeclarations MethodDeclaration MethodCallParams ParameterList Parameter MethodBody MethodBodyContent Type Statements Statement Expressions Expression Identifier
 
-/* Operator precedence and associativity rules */
-/* Used to resolve ambiguities in parsing expressions See https://www.gnu.org/software/bison/manual/bison.html#Precedence-Decl */ 
-%left ANDOR  AND        
-%left EQ GT LT      
-%left PLUSOP MINUSOP 
-%left MULTOP         
-%right NOT           
-%left LBRACKET DOT   
-
-
-
-/* Specify types for non-terminals in the grammar */
-/* The type specifies the data type of the values associated with these non-terminals */
-%type <Node *> root Goal MainClass ClassDeclarations ClassDeclaration ClassBody ClassMember VarDeclaration MethodDeclaration 
-%type <Node *> ReturnStatement MethodParameters MethodBody MainMethod Statements Statement expression expressions ArgumentList Type SystemOutPrintln
-
-/* Grammar rules section */
-/* This section defines the production rules for the language being parsed */
 %%
 
-root:
-      Goal { root = $1; }
-    ;
-Goal: MainClass ClassDeclarations
-    {
-      $$ = new Node("Goal", "", yylineno);
-      $$->children.push_back($1);  // MainClass node
-      $$->children.push_back($2);  // ClassDeclarations node
-    }
-;
+root: Goal { root = $1;};
 
-MainClass: PUBLIC CLASS IDENTIFIER LBRACE MainMethod RBRACE 
-    {
-           $$ = new Node("MainClass", $3, yylineno);
-           $$->children.push_back($5);
-    }
-; 
-
-MainMethod: PUBLIC STATIC VOID MAIN LP STRING LBRACKET RBRACKET IDENTIFIER RP LBRACE Statements RBRACE
-    {
-           $$ = new Node("MainMethod", $9, yylineno);
-           $$->children.push_back($12); 
-    }
-;
-
-ClassDeclarations:
-    { $$ = new Node("ClassDeclarations", "", yylineno); }
-  | ClassDeclarations ClassDeclaration
-    {
-        if ($1 && $2) {
-            $$ = $1;
-            $$->children.push_back($2);
-        } else {
-            cerr << "Null node encountered while building ClassDeclarations." << endl;
-        }
-    }
-;
+Goal: MainClass ClassDeclarations END {
+    $$ = new Node("Goal", "", yylineno);
+    $$->children.push_back($1);
+    $$->children.push_back($2);
+};
 
 
-ClassDeclaration:
-    CLASS IDENTIFIER LBRACE ClassBody RBRACE
-    {
-        $$ = new Node("ClassDeclaration", $2, yylineno);
-        $$->children.push_back($4);
-    }
-;
+MainClass: PUBLIC CLASS Identifier LBRACE PUBLIC STATIC VOID MAIN LP STRING LBRACKET RBRACKET Identifier RP LBRACE Statements RBRACE RBRACE {
+    $$ = new Node("MainClass", "", $3->lineno);
+      $$->children.push_back($3);
+      $$->children.push_back($13);
+      $$->children.push_back($16);
 
-ClassBody: ClassBody ClassMember
-    {
-           $$ = $1;
-           $$->children.push_back($2);
-    }
-  | /* empty */
-    {
-        $$ = new Node("ClassBody", "", yylineno);
-    }
-;
-
-ClassMember:
-    VarDeclaration { $$ = $1; }
-  | MethodDeclaration { $$ = $1; }
-;
+};
 
 
-VarDeclaration: Type IDENTIFIER SEMICOLON
-    {
-                Node* idNode = new Node("Identifier", $2, yylineno);
-                $$ = new Node("VarDeclaration", "", yylineno);
-                $$->children.push_back($1);  // Type node
-                $$->children.push_back(idNode);  // Identifier node
-    }
-;
-
-
-MethodDeclaration:
-    PUBLIC Type IDENTIFIER LP MethodParameters RP LBRACE MethodBody ReturnStatement RBRACE
-    {
-        $$ = new Node("MethodDeclaration", $3, yylineno);  // Store method name ($3) correctly
-        $$->children.push_back($5);  // Parameters
-        $$->children.push_back($8);  // Method body
-        $$->children.push_back($9);  // Return statement
-    }
-;
-
-
-MethodParameters:
-    /* No parameters */
-    { $$ = new Node("Parameters", "", yylineno); }
-  | Type IDENTIFIER
-{
-    $$ = new Node("Parameters", "", yylineno); // ✅ Create Parameters node
-    Node* paramNode = new Node("Parameter", "", yylineno);
-    paramNode->children.push_back(new Node("Identifier", $2, yylineno)); // Properly set child identifier
-    $$->children.push_back(paramNode);
+ClassDeclarations: ClassDeclaration { $$ = $1; }
+                  | ClassDeclarations ClassDeclaration {
+        $$ = new Node("ClassDeclarations", "", yylineno);
+          $$->children.push_back($1);
+          $$->children.push_back($2);
 }
+                  | { $$ = new Node("ClassDeclartionsEmpty", "", yylineno);
+};
 
-| MethodParameters COMMA Type IDENTIFIER
-{
-    $$ = $1; // ✅ Use existing MethodParameters node
 
-    Node* paramNode = new Node("Parameter", "", yylineno); // Create a proper Parameter node
-    paramNode->children.push_back(new Node("Identifier", $4, yylineno)); // Add Identifier as a child
+ClassDeclaration: CLASS Identifier LBRACE VarDeclarations MethodDeclarations RBRACE {
+    /* Construct the ClassDeclaration node */
+    $$ = new Node("ClassDeclaration", "", $2->lineno);
+      $$->children.push_back($2);
+      $$->children.push_back($4);
+      $$->children.push_back($5);
 
-    $$->children.push_back(paramNode); // ✅ Add parameter to the list
+};
+
+VarDeclarations: VarDeclaration {$$ = $1;}
+                | VarDeclarations VarDeclaration { 
+        $$ = new Node("VarDeclarations", "", yylineno);
+          $$->children.push_back($1);
+          $$->children.push_back($2);
 }
+                | { $$ = new Node("VarDeclarationsEmpty", "", yylineno);
+};
+
+VarDeclaration: Type Identifier SEMICOLON {
+    $$ = new Node("VarDeclaration", "", yylineno);
+      $$->children.push_back($1);
+      $$->children.push_back($2);
+};
+
+MethodDeclarations: MethodDeclaration {$$ = $1;}
+                    | MethodDeclarations MethodDeclaration {
+                          $$ = new Node("MethodDeclarations", "", yylineno);
+                        $$->children.push_back($1);
+                        $$->children.push_back($2);
+}
+                    | { $$ = new Node("MethodDeclarationsEmpty", "", yylineno);
+};
+
+MethodDeclaration: 
+    PUBLIC Type Identifier LP ParameterList RP MethodBody {
+    $$ = new Node("MethodDeclaration", "", $3->lineno);
+      $$->children.push_back($2);
+      $$->children.push_back($3);
+      $$->children.push_back($5);
+      $$->children.push_back($7);
+};
+          
+
+ParameterList: Parameter {
+                  $$ = new Node("ParameterList", "", yylineno);
+                  $$->children.push_back($1);
+              }
+            | ParameterList COMMA Parameter {
+                  $$ = $1; // Use the existing ParameterList node
+                  $1->children.push_back($3);
+              };
+            | { 
+                $$ = new Node("ParametersEmpty", "", yylineno);
+            };
+
+Parameter: Type Identifier {
+              $$ = new Node("Parameter", "", yylineno);
+              $$->children.push_back($1);
+              $$->children.push_back($2);
+          };
+
+MethodBody: LBRACE MethodBodyContent RETURN Expression SEMICOLON RBRACE {
+    $$ = new Node("MethodBody", "", yylineno);
+      $$->children.push_back($2);
+      Node* returnStmt = new Node("ReturnStatement", "", yylineno);
+    returnStmt->children.push_back($4);
+    $$->children.push_back(returnStmt);
+};
+
+MethodBodyContent: VarDeclaration MethodBodyContent { 
+                                $$ = $2;
+                                  $$->children.push_back($1);
+}
+                | Statement MethodBodyContent {                                 
+                                $$ = $2;
+                                  $$->children.push_back($1);
+}
+                | {$$ = new Node("MethodBodyContent", "", yylineno);
+};  
+                
+
+Type: INT LBRACKET RBRACKET { $$ = new Node("Type", "Array [int]", yylineno); }
+    | BOOLEAN { $$ = new Node("Type", "Bool", yylineno); }
+    | INT { $$ = new Node("Type", "Int", yylineno); }
+    | Identifier { $$ = new Node("Type", $1->value, yylineno); 
+};
 
 
-;
+Statements: Statement { $$ = new Node("Statements", "", yylineno);
+                          $$->children.push_back($1);
+}
+                        | Statements Statement { 
+                              $$ = new Node("ListOfStatements", "", yylineno);
+                                $$->children.push_back($1);
+                                $$->children.push_back($2);
+};
 
-MethodBody:
-    /* No body */
-    { $$ = new Node("MethodBody", "", yylineno); }
+Statement: LBRACE Statements RBRACE 
+{ $$ = new Node("BlockStatement", "", yylineno);
+                                        $$->children.push_back($2);
+}
+         | IF LP Expression RP Statement { $$ = new Node("IfStatement", "", yylineno); 
+                                                     $$->children.push_back($3);
+                                                     $$->children.push_back($5); 
+}
+         | IF LP Expression RP Statement ELSE Statement { $$ = new Node("IfElseStatement", "", yylineno); 
+                                                                    $$->children.push_back($3);
+                                                                    $$->children.push_back($5);
+                                                                    $$->children.push_back($7);
+}
+         | WHILE LP Expression RP Statement { $$ = new Node("WhileStatement", "", yylineno); 
+                                                         $$->children.push_back($3);
+                                                         $$->children.push_back($5);     
+}
+         | PRINTLN LP Expression RP SEMICOLON { $$ = new Node("PrintStatement", "", yylineno); 
+                                                          $$->children.push_back($3);
+}
+         | Identifier LBRACKET Expression RBRACKET EQUALS Expression SEMICOLON { $$ = new Node("ArrayAssignmentStatement", "", yylineno); 
+                                                                                   $$->children.push_back($1);
+                                                                                   $$->children.push_back($3);
+                                                                                   $$->children.push_back($6);
+}
+         | Identifier EQUALS Expression SEMICOLON { $$ = new Node("AssignmentStatement", "", yylineno);
+                                                      $$->children.push_back($1);
+                                                      $$->children.push_back($3);
+};
 
-  | MethodBody VarDeclaration
-    {
-        $$ = $1;
-        $$->children.push_back($2); 
-    }
-  | MethodBody Statement
-    {
-        $$ = $1;
-        $$->children.push_back($2); 
-    };
-    
-ReturnStatement:
-    RETURN expression SEMICOLON
-    {
-        $$ = new Node("ReturnStatement", "", yylineno);
-        $$->children.push_back($2);  // Expression node
-    }
-;
+Expressions: Expression { 
+                  $$ = new Node("Expressions", "", yylineno);
+                  $$->children.push_back($1);
+              }
+            | Expressions COMMA Expression { 
+                  $$ = $1; 
+                  $$->children.push_back($3); 
+              };
 
-
-
-
-
-
-
-Type:
-      INT LBRACKET RBRACKET
-      {
-          $$ = new Node("int[]", "", yylineno);  // Clearly define it as an integer array
-      }
-    | BOOLEAN
-      {
-          $$ = new Node("boolean", "", yylineno);
-      }
-    | INT
-      {
-          $$ = new Node("int", "", yylineno);
-      }
-    | IDENTIFIER
-      {
-          $$ = new Node("UserDefinedType", $1, yylineno);  // Custom or user-defined type
-      }
-;
-
-
-
-
-Statements:
-    Statement 
-    { $$ = new Node("Statements", "", yylineno);}
-  | Statements Statement
-    {
-        $$ = $1;
-        $$->children.push_back($2);
-    }
-;
+MethodCallParams: Expressions { 
+                     $$ = $1; 
+                 }
+               | /* empty */ { 
+                     $$ = new Node("ExpressionsEmpty", "", yylineno);
+                 };
 
 
+Expression: 
+          Expression AND Expression 
+          {$$ = new Node("Expression", "And", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression OR Expression 
+          { $$ = new Node("Expression", "Or", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression LT Expression 
+          { $$ = new Node("Expression", "LessThan", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression GT Expression 
+          { $$ = new Node("Expression", "GreaterThan", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression EQUAL Expression 
+          { $$ = new Node("Expression", "Equal", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression PLUS Expression 
+          { $$ = new Node("Expression", "Add", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression MINUS Expression 
+          { $$ = new Node("Expression", "Subtract", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression TIMES Expression 
+          { $$ = new Node("Expression", "Multiply", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression DIVIDE Expression 
+          { $$ = new Node("Expression", "Divide", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression LBRACKET Expression RBRACKET 
+          { $$ = new Node("Expression", "ArrayAccess", yylineno); $$->children.push_back($1); $$->children.push_back($3);}
+          
+          | Expression DOT LENGTH 
+          { $$ = new Node("Expression", "LengthAccess", yylineno); $$->children.push_back($1);}
+          
+          | Expression DOT Identifier LP MethodCallParams RP 
+          { $$ = new Node("Expression", "MethodCall", yylineno); $$->children.push_back($1); $$->children.push_back($3); $$->children.push_back($5); }
+          
+          | INTEGER_LITERAL 
+          { $$ = new Node("IntegerLiteral", std::to_string($1), yylineno); }
+          
+          | TRUE 
+          { $$ = new Node("Literal", "True", yylineno); }
+          
+          | FALSE 
+          { $$ = new Node("Literal", "False", yylineno); }
+          
+          | Identifier 
+          { $$ = new Node("Expression", "Identifier", yylineno); $$->children.push_back($1);}
+          
+          | THIS 
+          { $$ = new Node("Expression", "This", yylineno); }
+          
+          | NEW INT LBRACKET Expression RBRACKET 
+          { $$ = new Node("Expression", "NewIntArray", yylineno); $$->children.push_back($4);}
+          
+          | NEW Identifier LP RP 
+          { $$ = new Node("Expression", "NewObject", yylineno); $$->children.push_back($2);}
+          
+          | NOT Expression 
+          { $$ = new Node("Expression", "Not", yylineno); $$->children.push_back($2);}
+          
+          | LP Expression RP 
+          { $$ = $2; 
+};
 
-Statement:
-      LBRACE Statements RBRACE
-      {
-          $$ = new Node("BlockStatement", "", yylineno);
-          $$->children.push_back($2);  // Add the block of statements
-      }
-    | IF LP expression RP  Statement  ELSE  Statement 
-      {
-          $$ = new Node("IfStatement", "", yylineno);
-          $$->children.push_back($3);  // Condition (Expression)
-          $$->children.push_back($5);  // Then block (Statement)
-          $$->children.push_back($7); // Else block (Statement)
-      }
-    | IF LP expression RP  Statement %prec LOWER_THAN_ELSE
-      {
-          $$ = new Node("IfStatement", "", yylineno);
-          $$->children.push_back($3);  // Condition (Expression)
-          $$->children.push_back($5);  // Then block (Statement)
-      }
-    | WHILE LP expression RP Statement
-      {
-          $$ = new Node("WhileStatement", "", yylineno);
-          $$->children.push_back($3);  // Condition (Expression)
-          $$->children.push_back($5);  // Body of the loop
-      }
-    | SystemOutPrintln LP expression RP SEMICOLON
-      {
-          $$ = new Node("PrintStatement", "", yylineno);
-          $$->children.push_back($3);  // Add the expression node as a child
-      }
-    | IDENTIFIER ASSIGN expression SEMICOLON
-      {
-          $$ = new Node("Assignment", $1, yylineno);
-          $$->children.push_back($3);  // Add the expression node as a child
-      }
-    | IDENTIFIER LBRACKET expression RBRACKET ASSIGN expression SEMICOLON
-      {
-          $$ = new Node("ArrayAssignment", $1, yylineno);
-          $$->children.push_back($3);  // Array index expression
-          $$->children.push_back($6);  // Value expression
-      }
-      
-;
-
-SystemOutPrintln:
-      SYSTEM DOT OUT DOT PRINTLN
-      {
-          $$ = new Node("SystemOutPrintln", "", yylineno);
-      }
-;
-
-
-
-expression:   expression ANDOR expression { 
-                            $$ = new Node("LogicalAndOr", "", yylineno);
-                            $$->children.push_back($1); 
-                            $$->children.push_back($3); 
-                          }
-            | expression LT expression { 
-                            $$ = new Node("LessThan", "", yylineno);
-                            $$->children.push_back($1);
-                            $$->children.push_back($3);
-                          }
-            | expression GT expression { 
-                            $$ = new Node("GreaterThan", "", yylineno);
-                            $$->children.push_back($1);
-                            $$->children.push_back($3);
-                          }
-            | expression EQ expression { 
-                            $$ = new Node("Equals", "", yylineno);
-                            $$->children.push_back($1);
-                            $$->children.push_back($3);
-                          }
-                  
-            |  expression PLUSOP expression {    
-                            $$ = new Node("AddExpression", "", yylineno);
-                            $$->children.push_back($1);
-                            $$->children.push_back($3);
-                            /* printf("r1 "); */
-                          }
-            | expression MINUSOP expression {
-                            $$ = new Node("SubExpression", "", yylineno);
-                            $$->children.push_back($1);
-                            $$->children.push_back($3);
-                            /* printf("r2 "); */
-                          }
-            | expression MULTOP expression {
-                            $$ = new Node("MultExpression", "", yylineno);
-                            $$->children.push_back($1);
-                            $$->children.push_back($3);
-                            /* printf("r3 "); */
-                          }
-            | expression AND expression{
-                            $$ = new Node("AndExpression", "", yylineno);
-                            $$->children.push_back($1);
-                            $$->children.push_back($3);
-            }
-            
-           
-            | expression LBRACKET expression RBRACKET { 
-                            $$ = new Node("ArrayAccess", "", yylineno);
-                            $$->children.push_back($1);  // Arraynamnet
-                            $$->children.push_back($3);  // Indexet
-                          }
-            | expression DOT LENGTH { 
-                            $$ = new Node("ArrayLength", "", yylineno);
-                            $$->children.push_back($1); // Arraynamnet
-                          }
-            | expression DOT IDENTIFIER LP ArgumentList RP {
-                            $$ = new Node("MethodCall", $3, yylineno);
-                            $$->children.push_back($1); // Lägg till objektet som anropar metoden
-                            $$->children.push_back($5); // Lägg till argumentlistan
-                          }
-           
-            | INTEGER_LITERAL { 
-                            $$ = new Node("IntegerLiteral", $1, yylineno);
-                          }
-            | TRUE { 
-                            $$ = new Node("BooleanLiteral", "true", yylineno);
-                          }
-            | FALSE { 
-                            $$ = new Node("BooleanLiteral", "false", yylineno);
-                          }
-            | IDENTIFIER { 
-                            $$ = new Node("Identifier", $1, yylineno);
-                          }
-            | NOT expression { 
-                            $$ = new Node("Negation", "", yylineno);
-                            $$->children.push_back($2); // Det negerade uttrycket
-                          }
-            | NEW INT LBRACKET expression RBRACKET { 
-                            $$ = new Node("NewArray", "int", yylineno);
-                            $$->children.push_back($4);                           }
-            | NEW IDENTIFIER LP RP { 
-                            $$ = new Node("NewObject", $2, yylineno);
-                          }
-            | THIS
-                          {
-                              $$ = new Node("ThisExpression", "this", yylineno);
-                          }
-            |LP expression RP {
-                            $$ = new Node("INParantes", "", yylineno);  // Adjusted to match your constructor
-                            $$->children.push_back($2);  // Add the expression node as a child
-                        }
-                              
-            ;
-
-
-expressions:
-    expression {
-        $$ = new Node("Arguments", "", yylineno);
-        $$->children.push_back($1);
-    }
-    | expressions COMMA expression {
-        $$ = $1; 
-        $$->children.push_back($3); 
-    };
-
-ArgumentList:
-    expressions {
-      $$ = $1;
-    }
-    | 
-    {
-    /* Tom lista */
-    $$ = new Node("Arguments", "", yylineno); 
-    };
-
+Identifier: IDENTIFIER { $$ = new Node("Identifier", $1, yylineno); 
+};

@@ -73,22 +73,22 @@ int main(int argc, char **argv) {
             }
 
             try {
-                //root->print_tree();
+                root->print_tree();
                 root->generate_tree();
 
                 SymbolTable table;
-
-                // Build the symbol table from the AST
+//
+                //// Build the symbol table from the AST
                 buildSymbolTable(root, table);
-
-                // Detect undeclared identifiers
-                //detectUndeclaredIdentifiers(root, table, "", "");
-
-                // Perform general semantic checks
+//
+                //// Detect undeclared identifiers
+                ////detectUndeclaredIdentifiers(root, table, "", "");
+//
+                //// Perform general semantic checks
                 performSemanticAnalysis(root, table);
-
-                // Print the symbol table and generate DOT file
-                //table.printTable();
+//
+                //// Print the symbol table and generate DOT file
+                table.printTable();
                 table.generateDotFile("st.dot");
 
             } catch (const exception &e) {

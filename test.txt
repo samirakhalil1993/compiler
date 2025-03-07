@@ -1,33 +1,36 @@
-public class DuplicateIdentifiers {
+public class OperatorPriority {
     public static void main(String[] a) {
-        System.out.println(new MyClass().Pen(1, 2));
-
+        System.out.println(new OP().arithmetic());
     }
 }
 
-class DuplicateIdentifiers {// @error - semantic (Already Declared Class: 'DuplicateIdentifiers')
-    int a;
-    int a;// @error - semantic (Already Declared variable: 'a')
+class OP {
 
-    public boolean func() {
-        return true;
+    public int arithmetic() {
+        int b;
+        b = 4;
+        int c;
+        c = 8;
+        int ret;
+        // the following statements should generate the same tree
+        ret = 1 + 18 * 3 - b + c * 9;
+        ret = 1 + (18 * 3) - b + (c * 9);
+        return ret;
     }
 
-    public int func() {// @error - semantic (Already Declared Function: 'func')
-        return 1;
-    }
-}
-
-class MyClass {
-    boolean b;
-    boolean b;// @error - semantic (Already Declared variable: 'b')
-
-    public int Pen(int param, int param) {// @error - semantic (Already Declared parameter: 'param')
-        return 1;
-    }
-
-    public int Pen2(int param) {
-        int param; // @error - semantic (Already Declared parameter: 'param')
-        return 1;
+    public boolean relational() {
+        int a;
+        int b;
+        boolean c;
+        boolean d;
+        a = 10;
+        b = 12;
+        d = false;
+        c = true;
+        boolean ret;
+        // the following statements should generate the same tree
+        ret = a < b && !d || d == !c;
+        ret = ((a < b) && (!d)) || (d == (!c));
+        return ret;
     }
 }

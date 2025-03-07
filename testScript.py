@@ -1,4 +1,3 @@
-
 import glob
 import os
 import re
@@ -141,7 +140,7 @@ def display_file_details(file_id, file_details, output_type=None):
         
         # Check if the expected result matches the provided one
         # print("hello")
-        print(details)
+        # print(details['expected'])
         if 'expected' in details and (details['expected'] in details['stdout'] or details['stdout'] in details['expected'] or details['stdout'] == details['expected']):
             print(colored(details['expected'], Colors.DARK_GREEN))
         elif 'expected' in details:

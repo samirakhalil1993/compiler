@@ -11,16 +11,16 @@ class MyClass {
     classdata d;
 
     public int aFunc() {
-        e = a; // @error - semantic ('e' does not exist in the current scope)
+        e = a; // @error - semantic ('e' does not exist in the current scope)00
         a = d.yFunc();// @error - semantic ('a' and expression 'd.yFunc()' are of different types)
         a = d.zFunc();// @error - semantic ('a' and expression 'd.zFunc()' are of different types)
         return a;
     }
 
     public boolean bFunc() {
-        b = d.zzFunc(); // @error - semantic ('zzFunc' does not exist)
+        b = d.zzFunc(); // @error - semantic ('zzFunc' does not exist)000
         a = d.xFunc();
-        b = this.zFunc(); // @error - semantic ('zFunc' does not exist)
+        b = this.zFunc(); // @error - semantic ('zFunc' does not exist)00
         b = this.aFunc(); // @error - semantic (type mismatch)
         b = d.xFunc();// @error - semantic ('b' and expression 'd.xFunc()' are of different types)
         b = d.zFunc();// @error - semantic ('b' and expression 'd.zFunc()' are of different types)
