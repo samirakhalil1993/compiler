@@ -1,0 +1,9 @@
+digraph SymbolTable {
+  rankdir=LR;
+  node [shape=record];
+  "D1" [label="{D1|Class|global}"];
+  "Sum" [label="{Sum|Class|global}"];
+  "calcSum" [label="{calcSum|Method Int|Sum}"];
+  "num" [label="{num|Parameter Int|Sum.calcSum}"];
+  "sum" [label="{sum|Variable Int|Sum.calcSum}"];
+}

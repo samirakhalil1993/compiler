@@ -1,0 +1,11 @@
+digraph CFG {
+  block0 [label="Block 0\n"];
+  block1 [label="Block 1\nprint = MethodCall\ngoto while_cond\nsum = 0\nreturn = sum\n"];
+  block1 -> block2 [label="true"];
+  block2 [label="Block 2\nt0 = 0 < num\nt1 = 0 < num\nif t1 goto while_body\ngoto while_exit\n"];
+  block2 -> block3 [label="true"];
+  block2 -> block4 [label="false"];
+  block3 [label="Block 3\nt2 = sum + num\nsum = t2\nt3 = num - 1\nnum = t3\ngoto while_cond\n"];
+  block3 -> block2 [label="true"];
+  block4 [label="Block 4\n"];
+}

@@ -27,6 +27,8 @@
 
 // define the operator precedence
 // Define the operator precedence (from lowest to highest)
+%right EQUALS
+
 %left OR
 %left AND
 %left EQUAL

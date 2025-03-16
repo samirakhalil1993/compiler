@@ -1,0 +1,109 @@
+digraph {
+n0 [label="Goal:"];
+n1 [label="MainClass:"];
+n2 [label="Identifier:D1"];
+n1 -> n2
+n3 [label="Identifier:a"];
+n1 -> n3
+n4 [label="Statements:"];
+n5 [label="PrintStatement:"];
+n6 [label="Expression:MethodCall"];
+n7 [label="Expression:NewObject"];
+n8 [label="Identifier:Sum"];
+n7 -> n8
+n6 -> n7
+n9 [label="Identifier:calcSum"];
+n6 -> n9
+n10 [label="Expressions:"];
+n11 [label="IntegerLiteral:100"];
+n10 -> n11
+n6 -> n10
+n5 -> n6
+n4 -> n5
+n1 -> n4
+n0 -> n1
+n12 [label="ClassDeclaration:"];
+n13 [label="Identifier:Sum"];
+n12 -> n13
+n14 [label="VarDeclarationsEmpty:"];
+n12 -> n14
+n15 [label="MethodDeclaration:"];
+n16 [label="Type:Int"];
+n15 -> n16
+n17 [label="Identifier:calcSum"];
+n15 -> n17
+n18 [label="ParameterList:"];
+n19 [label="Parameter:"];
+n20 [label="Type:Int"];
+n19 -> n20
+n21 [label="Identifier:num"];
+n19 -> n21
+n18 -> n19
+n15 -> n18
+n22 [label="MethodBody:"];
+n23 [label="MethodBodyContent:"];
+n24 [label="WhileStatement:"];
+n25 [label="Expression:LessThan"];
+n26 [label="IntegerLiteral:0"];
+n25 -> n26
+n27 [label="Expression:Identifier"];
+n28 [label="Identifier:num"];
+n27 -> n28
+n25 -> n27
+n24 -> n25
+n29 [label="BlockStatement:"];
+n30 [label="ListOfStatements:"];
+n31 [label="Statements:"];
+n32 [label="AssignmentStatement:"];
+n33 [label="Identifier:sum"];
+n32 -> n33
+n34 [label="Expression:Add"];
+n35 [label="Expression:Identifier"];
+n36 [label="Identifier:sum"];
+n35 -> n36
+n34 -> n35
+n37 [label="Expression:Identifier"];
+n38 [label="Identifier:num"];
+n37 -> n38
+n34 -> n37
+n32 -> n34
+n31 -> n32
+n30 -> n31
+n39 [label="AssignmentStatement:"];
+n40 [label="Identifier:num"];
+n39 -> n40
+n41 [label="Expression:Subtract"];
+n42 [label="Expression:Identifier"];
+n43 [label="Identifier:num"];
+n42 -> n43
+n41 -> n42
+n44 [label="IntegerLiteral:1"];
+n41 -> n44
+n39 -> n41
+n30 -> n39
+n29 -> n30
+n24 -> n29
+n23 -> n24
+n45 [label="AssignmentStatement:"];
+n46 [label="Identifier:sum"];
+n45 -> n46
+n47 [label="IntegerLiteral:0"];
+n45 -> n47
+n23 -> n45
+n48 [label="VarDeclaration:"];
+n49 [label="Type:Int"];
+n48 -> n49
+n50 [label="Identifier:sum"];
+n48 -> n50
+n23 -> n48
+n22 -> n23
+n51 [label="ReturnStatement:"];
+n52 [label="Expression:Identifier"];
+n53 [label="Identifier:sum"];
+n52 -> n53
+n51 -> n52
+n22 -> n51
+n15 -> n22
+n12 -> n15
+n0 -> n12
+}

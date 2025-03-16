@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <stack>
 
 using namespace std;
 
@@ -20,16 +21,35 @@ struct SymbolRecord {
 class SymbolTable {
 public:
     vector<SymbolRecord> records; // Flat storage of all symbols
+    stack<string> scopeStack; // Stack to track nested scopes
 
-    // ✅ Add a symbol to the table
+    SymbolTable() {
+        scopeStack.push("global"); // Initialize with global scope
+    }
+
+    // Enter a new scope
+    string enterScope(const string& parentScope, const string& newScope) {
+        string fullScope = parentScope.empty() ? newScope : parentScope + "." + newScope;
+        scopeStack.push(fullScope);
+        return fullScope;
+    }
+
+    //  Exit the current scope
+    string exitScope(string currentScope) {
+        if (!scopeStack.empty()) {
+            scopeStack.pop();
+        }
+        return scopeStack.empty() ? "global" : scopeStack.top();
+    }
+
+    //  Add a symbol to the table
     void addSymbol(const string& name, const string& type, const string& scope) {
         if (!isDuplicateSymbol(name, scope)) {
             records.push_back(SymbolRecord(name, type, scope));
-            cout << "Added symbol: " << name << " (Type: " << type << ", Scope: " << scope << ")" << endl;
         }
     }
 
-    // ✅ Lookup a symbol in a specific scope
+    //  Lookup a symbol in a specific scope
     SymbolRecord* lookupSymbol(const string& name, const string& scope) {
         for (auto& record : records) {
             if (record.name == name && record.scope == scope) {
@@ -39,12 +59,35 @@ public:
         return nullptr;
     }
 
-    // ✅ Check if a symbol exists in the table
-    bool isDeclared(const string& name, const string& scope) {
+    //  Lookup symbol in multiple scopes (current → parent → global)
+    SymbolRecord* lookupSymbolInScopes(const string& name, const string& type, string currentScope, string classScope) {
+        while (!currentScope.empty()) {
+            SymbolRecord* result = lookupSymbol(name, currentScope);
+            if (result) return result;
+
+            // Move up the scope hierarchy
+            if (currentScope == classScope) {
+                currentScope = "global"; // Jump to global scope if in class scope
+            } else {
+                size_t dotPos = currentScope.find_last_of('.');
+                currentScope = (dotPos == string::npos) ? "" : currentScope.substr(0, dotPos);
+            }
+        }
+        return lookupSymbol(name, "global"); // Final fallback to global
+    }
+
+    // Check if a symbol exists in the table
+    bool isDeclared(const string& name, const string& type, const string& scope) {
         return lookupSymbol(name, scope) != nullptr;
     }
 
-    // ✅ Print the Symbol Table
+
+
+    // Check if a symbol is already declared in the given scope
+    bool isDuplicateSymbol(const string& name, const string& scope) {
+        return lookupSymbol(name, scope) != nullptr;
+    }
+    // Print the Symbol Table
     void printTable() const {
         cout << "\n======= Symbol Table =======\n";
         for (const auto& record : records) {
@@ -55,7 +98,7 @@ public:
         cout << "============================\n";
     }
 
-    // ✅ Write the Symbol Table to a DOT file for visualization
+    // Write the Symbol Table to a DOT file for visualization
     void generateDotFile(const string& filename) const {
         ofstream outFile(filename);
         if (!outFile) {
@@ -77,12 +120,6 @@ public:
         cout << "Symbol table written to " << filename << endl;
     }
 
-private:
-    // Check if a symbol is already declared in the given scope
-    bool isDuplicateSymbol(const string& name, const string& scope) {
-        return lookupSymbol(name, scope) != nullptr;
-    }
 };
-
 
 #endif // SYMBOL_TABLE_H

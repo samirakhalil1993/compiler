@@ -1,36 +1,17 @@
-public class OperatorPriority {
-    public static void main(String[] a) {
-        System.out.println(new OP().arithmetic());
-    }
+public class D1 {
+  public static void main(String[] a) {
+    System.out.println(new Sum().calcSum(100));
+  }
 }
 
-class OP {
-
-    public int arithmetic() {
-        int b;
-        b = 4;
-        int c;
-        c = 8;
-        int ret;
-        // the following statements should generate the same tree
-        ret = 1 + 18 * 3 - b + c * 9;
-        ret = 1 + (18 * 3) - b + (c * 9);
-        return ret;
+class Sum {
+  public int calcSum(int num) {
+    int sum;
+    sum = 0;
+    while (0 < num) {
+      sum = sum + num;
+      num = num - 1;
     }
-
-    public boolean relational() {
-        int a;
-        int b;
-        boolean c;
-        boolean d;
-        a = 10;
-        b = 12;
-        d = false;
-        c = true;
-        boolean ret;
-        // the following statements should generate the same tree
-        ret = a < b && !d || d == !c;
-        ret = ((a < b) && (!d)) || (d == (!c));
-        return ret;
-    }
+    return sum;
+  }
 }

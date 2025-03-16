@@ -3,7 +3,7 @@
 #include "Node.h"            // Custom header for AST (Abstract Syntax Tree) nodes
 #include "SymbolTable.h"     // Symbol Table implementation
 #include "SymbolTableBuilder.h"
-#include "SemanticAnalyzer.h"
+#include "irg.h"
 
 using namespace std;
 
@@ -77,19 +77,36 @@ int main(int argc, char **argv) {
                 root->generate_tree();
 
                 SymbolTable table;
-//
-                //// Build the symbol table from the AST
-                buildSymbolTable(root, table);
-//
-                //// Detect undeclared identifiers
-                ////detectUndeclaredIdentifiers(root, table, "", "");
-//
-                //// Perform general semantic checks
-                performSemanticAnalysis(root, table);
-//
+
+                checkForDuplicate (root, table);
+                
+                //detectInvalidReturnTypes(root, table, " ", "");  
+                //checkForUndeclared(root, table);
+
+                
+               
                 //// Print the symbol table and generate DOT file
                 table.printTable();
                 table.generateDotFile("st.dot");
+                
+                // Generate Intermediate Representation (IR) and Control Flow Graph (CFG)
+                CFG cfg;
+                BasicBlock* entryBlock = new BasicBlock();
+                cfg.addBlock(entryBlock);
+
+                // Generate IR from AST
+                generateIR(root, cfg, entryBlock);
+
+                // Print IR for debugging
+                cfg.printCFG();
+
+                // Generate DOT file for CFG visualization
+                cfg.generateDotFile("cfg.dot");
+
+                printf("\nThe control flow graph has been generated: cfg.dot\n");
+                printf("Use 'make cfg' to generate the PDF visualization.\n");
+
+                
 
             } catch (const exception &e) {
                 cerr << "Exception caught: " << e.what() << endl;
@@ -103,3 +120,4 @@ int main(int argc, char **argv) {
 
     return errCode;
 }
+
